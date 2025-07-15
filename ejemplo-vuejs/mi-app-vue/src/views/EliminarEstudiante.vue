@@ -2,9 +2,20 @@
   <div class="eliminar-estudiante-container">
     <h2>Eliminar Estudiante</h2>
     <div v-if="form">
-      <p>¿Estás seguro de que deseas eliminar a <b>{{ form.nombre }} {{ form.apellido }}</b> (Cédula: {{ form.cedula }})?</p>
-      <button @click="eliminarEstudiante" class="delete-btn">Sí, eliminar</button>
-      <button @click="$router.push({ name: 'EstudiantesList' })" class="cancel-btn">Cancelar</button>
+      <p>
+        ¿Estás seguro de que deseas eliminar a
+        <b>{{ form.nombre }} {{ form.apellido }}</b> (Cédula:
+        {{ form.cedula }})?
+      </p>
+      <button @click="eliminarEstudiante" class="delete-btn">
+        Sí, eliminar
+      </button>
+      <button
+        @click="$router.push({ name: 'EstudiantesList' })"
+        class="cancel-btn"
+      >
+        Cancelar
+      </button>
     </div>
     <p v-if="error" class="error-message">{{ error }}</p>
   </div>

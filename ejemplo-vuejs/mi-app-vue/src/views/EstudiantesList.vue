@@ -12,7 +12,7 @@
         <router-link
           :to="{
             name: 'EstudianteDetail',
-            params: { estudianteUrl: estudiante.url },
+            params: { estudianteUrl: encodeURIComponent(estudiante.url) },
           }"
         >
           {{ estudiante.nombre }} {{ estudiante.apellido }} (Cédula:

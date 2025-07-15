@@ -4,8 +4,8 @@ import Login from "../views/Login.vue";
 import EstudiantesList from "../views/EstudiantesList.vue";
 import EstudianteDetail from "../views/EstudianteDetail.vue";
 import EditarEstudiante from "../views/EditarEstudiante.vue";
-import EliminarEstudiante from "../views/EliminarEstudiante.vue"; 
-import CrearEstudiante from "../views/CrearEstudiante.vue"; 
+import EliminarEstudiante from "../views/EliminarEstudiante.vue";
+import CrearEstudiante from "../views/CrearEstudiante.vue";
 import CrearTelefono from "../views/CrearTelefono.vue";
 import EditarTelefono from "../views/EditarTelefono.vue";
 import EliminarTelefono from "../views/EliminarTelefono.vue";
@@ -28,12 +28,13 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/estudiantes/detail/:estudianteUrl*",
+    path: "/estudiantes/detail/:estudianteId",
     name: "EstudianteDetail",
     component: EstudianteDetail,
     props: true,
     meta: { requiresAuth: true },
   },
+
   {
     path: "/estudiantes/editar/:estudianteUrl*",
     name: "EditarEstudiante",
@@ -56,9 +57,9 @@ const routes = [
   },
   // Aquí el cambio: permitir opcionalmente pasar el estudianteId
   {
-    path: "/telefonos/nuevo/:estudianteId?",
+    path: "/telefonos/nuevo/:estudianteId",
     name: "CrearTelefono",
-    component: CrearTelefono, 
+    component: CrearTelefono,
     props: true,
     meta: { requiresAuth: true },
   },

@@ -21,7 +21,6 @@
 
 <script>
 import api from "@/api/axios";
-
 export default {
   name: "EditarTelefono",
   props: ["telefonoId"],
@@ -46,7 +45,10 @@ export default {
     async editarTelefono() {
       try {
         await api.put(`numerosts/${this.telefonoId}/`, this.form);
-        this.$router.push({ name: "EstudiantesList" });
+        this.$router.push({
+          name: "EstudianteDetail",
+          params: { estudianteUrl: this.form.estudiante },
+        });
       } catch (err) {
         this.error = "No se pudo actualizar el teléfono";
       }
@@ -78,7 +80,8 @@ label {
   font-weight: bold;
   margin-bottom: 6px;
 }
-input, select {
+input,
+select {
   width: 100%;
   padding: 7px 10px;
   border: 1px solid #ccc;

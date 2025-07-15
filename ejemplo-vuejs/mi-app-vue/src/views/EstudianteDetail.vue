@@ -14,14 +14,22 @@
           {{ numero.telefono }} ({{ numero.tipo }})
           <!-- Botones de acción al lado del teléfono -->
           <router-link
-            :to="{ name: 'EditarTelefono', params: { telefonoId: numero.telefono } }"
+            :to="{
+              name: 'EditarTelefono',
+              params: { telefonoId: numero.id },
+            }"
             class="action-link edit"
-          >Editar</router-link>
+            >Editar</router-link
+          >
           |
           <router-link
-            :to="{ name: 'EliminarTelefono', params: { telefonoId: numero.telefono } }"
+            :to="{
+              name: 'EliminarTelefono',
+              params: { telefonoId: numero.id },
+            }"
             class="action-link delete"
-          >Eliminar</router-link>
+            >Eliminar</router-link
+          >
         </li>
       </ul>
       <p v-else>No tiene números telefónicos registrados.</p>
@@ -31,20 +39,26 @@
         :to="{ name: 'CrearTelefono', params: { estudianteId: estudiante.id } }"
         class="back-button"
       >
-        ➕ Agregar Teléfono
+        Agregar Teléfono
       </router-link>
 
       <router-link :to="{ name: 'EstudiantesList' }" class="back-button">
         Volver al Listado
       </router-link>
       <router-link
-        :to="{ name: 'EditarEstudiante', params: { estudianteUrl: estudiante.url } }"
+        :to="{
+          name: 'EditarEstudiante',
+          params: { estudianteUrl: estudiante.url },
+        }"
         class="back-button"
       >
         Editar
       </router-link>
       <router-link
-        :to="{ name: 'EliminarEstudiante', params: { estudianteUrl: estudiante.url } }"
+        :to="{
+          name: 'EliminarEstudiante',
+          params: { estudianteUrl: estudiante.url },
+        }"
         class="back-button"
       >
         Eliminar
@@ -69,7 +83,17 @@ export default {
     };
   },
   async created() {
-    const decodedUrl = decodeURIComponent(this.estudianteUrl);
+    // Decodifica la URL si viene codificada
+    let decodedUrl = this.estudianteUrl;
+    try {
+      if (decodedUrl && decodedUrl.includes("%")) {
+        decodedUrl = decodeURIComponent(decodedUrl);
+      }
+    } catch (e) {
+      decodedUrl = this.estudianteUrl;
+    }
+    // Para debug
+    console.log("Detalle estudiante, URL a usar:", decodedUrl);
     await this.fetchEstudianteDetail(decodedUrl);
     await this.fetchNumerosTelefonicos(decodedUrl);
   },
@@ -82,6 +106,7 @@ export default {
         this.estudiante = response.data;
       } catch (err) {
         this.error = "No se pudo cargar el detalle del estudiante.";
+        console.error("Detalle estudiante ERROR:", err, "URL usada:", url);
       } finally {
         this.loading = false;
       }
@@ -89,11 +114,14 @@ export default {
     async fetchNumerosTelefonicos(estudianteApiUrl) {
       try {
         const response = await api.get("numerosts/");
+        // Normaliza ambas URLs quitando slashes al final
         this.numerosTelefonicos = response.data.results.filter(
-          (numero) => numero.estudiante === estudianteApiUrl
+          (numero) =>
+            numero.estudiante.replace(/\/+$/, "") ===
+            estudianteApiUrl.replace(/\/+$/, "")
         );
       } catch (err) {
-        // Puedes mostrar error si lo deseas
+        console.error("Error cargando teléfonos:", err);
       }
     },
   },
@@ -111,7 +139,9 @@ export default {
   background-color: #fff;
   text-align: left;
 }
-h2, h3, h4 {
+h2,
+h3,
+h4 {
   text-align: center;
   color: #333;
   margin-bottom: 15px;
@@ -131,8 +161,12 @@ li {
   text-decoration: underline;
   cursor: pointer;
 }
-.action-link.edit:hover { color: #f1c40f; }
-.action-link.delete:hover { color: #e74c3c; }
+.action-link.edit:hover {
+  color: #f1c40f;
+}
+.action-link.delete:hover {
+  color: #e74c3c;
+}
 .back-button {
   display: block;
   width: fit-content;
@@ -145,7 +179,9 @@ li {
   text-align: center;
   transition: background-color 0.3s ease;
 }
-.back-button:hover { background-color: #0056b3; }
+.back-button:hover {
+  background-color: #0056b3;
+}
 .error-message {
   color: red;
   text-align: center;

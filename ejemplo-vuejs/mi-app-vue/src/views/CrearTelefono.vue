@@ -14,7 +14,6 @@
           <option value="fijo">Fijo</option>
         </select>
       </div>
-      
       <button type="submit" class="save-btn">Agregar</button>
     </form>
     <p v-if="error" class="error-message">{{ error }}</p>
@@ -26,6 +25,7 @@ import api from "@/api/axios";
 
 export default {
   name: "CrearTelefono",
+  props: ["estudianteId"],
   data() {
     return {
       form: {
@@ -33,26 +33,26 @@ export default {
         tipo: "",
         estudiante: "",
       },
-      estudiantes: [],
       error: null,
     };
   },
   async created() {
-    await this.fetchEstudiantes();
+    // Es preferible hardcodear el puerto del backend si tu frontend corre en otro, ej 8080 vs 8000
+    this.form.estudiante = `http://127.0.0.1:8000/api/estudiantes/${this.estudianteId}/`;
+  },
+  watch: {
+    estudianteId(newVal) {
+      this.form.estudiante = `http://127.0.0.1:8000/api/estudiantes/${newVal}/`;
+    },
   },
   methods: {
-    async fetchEstudiantes() {
-      try {
-        const response = await api.get("estudiantes/");
-        this.estudiantes = response.data.results || response.data;
-      } catch (err) {
-        this.error = "No se pudieron cargar los estudiantes.";
-      }
-    },
     async crearTelefono() {
       try {
         await api.post("numerosts/", this.form);
-        this.$router.push({ name: "EstudiantesList" });
+        this.$router.push({
+          name: "EstudianteDetail",
+          params: { estudianteUrl: this.form.estudiante },
+        });
       } catch (err) {
         this.error = "No se pudo crear el número telefónico";
       }
@@ -84,7 +84,8 @@ label {
   font-weight: bold;
   margin-bottom: 6px;
 }
-input, select {
+input,
+select {
   width: 100%;
   padding: 7px 10px;
   border: 1px solid #ccc;

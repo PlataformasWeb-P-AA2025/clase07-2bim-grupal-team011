@@ -15,7 +15,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 class NumeroTelefonicoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = NumeroTelefonico
-        fields = '__all__'
+        fields = ['id', 'url', 'telefono', 'tipo', 'estudiante']
 
 class EstudianteSerializer(serializers.HyperlinkedModelSerializer):
     telefonos = NumeroTelefonicoSerializer(
@@ -26,5 +26,4 @@ class EstudianteSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Estudiante
-        fields = '__all__'  # Incluye todos los campos del modelo + 'telefonos'
-        # Si prefieres especificar: fields = ['id', 'nombre', 'apellido', ..., 'telefonos']
+        fields = ['id', 'url', 'nombre', 'apellido', 'cedula', 'correo', 'telefonos']

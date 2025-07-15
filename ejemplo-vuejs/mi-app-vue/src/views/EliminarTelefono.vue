@@ -1,10 +1,10 @@
 <template>
   <div class="eliminar-telefono-container">
     <h2>Eliminar Teléfono</h2>
-    <div v-if="form">
+    <div v-if="telefono">
       <p>
         ¿Estás seguro de que deseas eliminar el teléfono
-        <b>{{ form.telefono }}</b> ({{ form.tipo }})?
+        <b>{{ telefono.telefono }}</b> ({{ telefono.tipo }})?
       </p>
       <button @click="eliminarTelefono" class="delete-btn">Sí, eliminar</button>
       <button @click="$router.back()" class="cancel-btn">Cancelar</button>
@@ -16,13 +16,12 @@
 
 <script>
 import api from "@/api/axios";
-
 export default {
   name: "EliminarTelefono",
   props: ["telefonoId"],
   data() {
     return {
-      form: null,
+      telefono: null,
       error: null,
       success: null,
     };
@@ -34,7 +33,7 @@ export default {
     async cargarTelefono() {
       try {
         const response = await api.get(`numerosts/${this.telefonoId}/`);
-        this.form = { ...response.data };
+        this.telefono = response.data;
       } catch (err) {
         this.error = "No se pudo cargar el teléfono";
       }
@@ -43,8 +42,13 @@ export default {
       try {
         await api.delete(`numerosts/${this.telefonoId}/`);
         this.success = "Teléfono eliminado correctamente";
-        // Redirige si lo necesitas
-        // this.$router.push({ name: 'EstudianteDetail', params: { estudianteUrl: encodeURIComponent(this.form.estudiante) } });
+        // Espera un poco y regresa a la lista del estudiante
+        setTimeout(() => {
+          this.$router.push({
+            name: "EstudianteDetail",
+            params: { estudianteUrl: this.telefono.estudiante },
+          });
+        }, 1000);
       } catch (err) {
         this.error = "No se pudo eliminar el teléfono";
       }
