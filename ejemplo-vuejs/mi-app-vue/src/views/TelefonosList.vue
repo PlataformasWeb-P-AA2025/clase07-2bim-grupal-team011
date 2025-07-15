@@ -15,16 +15,27 @@
             params: { estudianteUrl: estudiante.url },
           }"
         >
-          {{ estudiante.nombre }} {{ estudiante.apellido }} (Cédula:
-          {{ estudiante.cedula }})
+          {{ estudiante.nombre }} {{ estudiante.apellido }}
         </router-link>
+        <div v-if="estudiante.telefonos && estudiante.telefonos.length">
+          <span
+            v-for="telefono in estudiante.telefonos"
+            :key="telefono.id"
+            class="telefono"
+          >
+            📞 {{ telefono.telefono }}
+            <span v-if="telefono.tipo">({{ telefono.tipo }})</span>
+          </span>
+        </div>
+        <div v-else>
+          <span style="color: #888;">Sin teléfonos</span>
+        </div>
       </li>
     </ul>
     <p v-else>No hay estudiantes registrados.</p>
-    <router-link :to="{ name: 'CrearEstudiante' }" class="add-button">
-      Agregar Nuevo Estudiante
+    <router-link :to="{ name: 'CrearTelefono' }" class="add-button">
+      Agregar Nuevo Telefono
     </router-link>
-
   </div>
 </template>
 
@@ -59,7 +70,6 @@ export default {
         this.loading = false;
       }
     },
-    // Ya no necesitamos getEstudianteId() si pasamos la URL completa
   },
 };
 </script>
@@ -103,6 +113,13 @@ ul {
 
 .estudiante-item a:hover {
   text-decoration: underline;
+}
+
+.telefono {
+  display: inline-block;
+  margin-left: 10px;
+  color: #333;
+  font-size: 0.95em;
 }
 
 .add-button {
