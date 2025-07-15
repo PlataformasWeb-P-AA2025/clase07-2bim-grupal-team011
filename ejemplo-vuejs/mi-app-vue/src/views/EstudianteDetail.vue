@@ -12,26 +12,39 @@
       <ul v-if="numerosTelefonicos.length">
         <li v-for="numero in numerosTelefonicos" :key="numero.url">
           {{ numero.telefono }} ({{ numero.tipo }})
+          <!-- Botones de acción al lado del teléfono -->
+          <router-link
+            :to="{ name: 'EditarTelefono', params: { telefonoId: numero.telefono } }"
+            class="action-link edit"
+          >Editar</router-link>
+          |
+          <router-link
+            :to="{ name: 'EliminarTelefono', params: { telefonoId: numero.telefono } }"
+            class="action-link delete"
+          >Eliminar</router-link>
         </li>
       </ul>
       <p v-else>No tiene números telefónicos registrados.</p>
-      <router-link :to="{ name: 'EstudiantesList' }" class="back-button"
-        >Volver al Listado</router-link
-      >
+
+      <!-- Botón para agregar nuevo teléfono -->
       <router-link
-        :to="{
-          name: 'EditarEstudiante',
-          params: { estudianteUrl: estudiante.url },
-        }"
+        :to="{ name: 'CrearTelefono', params: { estudianteId: estudiante.id } }"
+        class="back-button"
+      >
+        ➕ Agregar Teléfono
+      </router-link>
+
+      <router-link :to="{ name: 'EstudiantesList' }" class="back-button">
+        Volver al Listado
+      </router-link>
+      <router-link
+        :to="{ name: 'EditarEstudiante', params: { estudianteUrl: estudiante.url } }"
         class="back-button"
       >
         Editar
       </router-link>
       <router-link
-        :to="{
-          name: 'EliminarEstudiante',
-          params: { estudianteUrl: estudiante.url },
-        }"
+        :to="{ name: 'EliminarEstudiante', params: { estudianteUrl: estudiante.url } }"
         class="back-button"
       >
         Eliminar
@@ -46,7 +59,7 @@ import api from "@/api/axios";
 
 export default {
   name: "EstudianteDetail",
-  props: ["estudianteUrl"], // <-- Ahora recibe 'estudianteUrl' como prop
+  props: ["estudianteUrl"],
   data() {
     return {
       estudiante: null,
@@ -56,42 +69,31 @@ export default {
     };
   },
   async created() {
-    // La URL viene codificada por el router, necesitamos decodificarla
     const decodedUrl = decodeURIComponent(this.estudianteUrl);
     await this.fetchEstudianteDetail(decodedUrl);
-    await this.fetchNumerosTelefonicos(decodedUrl); // También pasamos la URL para filtrar
+    await this.fetchNumerosTelefonicos(decodedUrl);
   },
   methods: {
     async fetchEstudianteDetail(url) {
       try {
         this.loading = true;
         this.error = null;
-        // Usamos la URL completa directamente para la petición
         const response = await api.get(url);
         this.estudiante = response.data;
       } catch (err) {
-        console.error(
-          "Error al cargar detalle del estudiante:",
-          err.response || err
-        );
         this.error = "No se pudo cargar el detalle del estudiante.";
       } finally {
         this.loading = false;
       }
     },
     async fetchNumerosTelefonicos(estudianteApiUrl) {
-      console.log(estudianteApiUrl);
       try {
         const response = await api.get("numerosts/");
-        // Filtramos los números telefónicos que pertenecen a este estudiante usando la URL completa
         this.numerosTelefonicos = response.data.results.filter(
           (numero) => numero.estudiante === estudianteApiUrl
         );
       } catch (err) {
-        console.error(
-          "Error al cargar números telefónicos:",
-          err.response || err
-        );
+        // Puedes mostrar error si lo deseas
       }
     },
   },
@@ -109,29 +111,28 @@ export default {
   background-color: #fff;
   text-align: left;
 }
-
-h2,
-h3,
-h4 {
+h2, h3, h4 {
   text-align: center;
   color: #333;
   margin-bottom: 15px;
 }
-
-p {
-  margin-bottom: 10px;
-}
-
 ul {
   list-style: disc;
   padding-left: 20px;
   margin-bottom: 20px;
 }
-
 li {
   margin-bottom: 5px;
 }
-
+.action-link {
+  margin-left: 8px;
+  font-size: 0.95em;
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.action-link.edit:hover { color: #f1c40f; }
+.action-link.delete:hover { color: #e74c3c; }
 .back-button {
   display: block;
   width: fit-content;
@@ -144,11 +145,7 @@ li {
   text-align: center;
   transition: background-color 0.3s ease;
 }
-
-.back-button:hover {
-  background-color: #0056b3;
-}
-
+.back-button:hover { background-color: #0056b3; }
 .error-message {
   color: red;
   text-align: center;

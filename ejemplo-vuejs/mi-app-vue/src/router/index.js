@@ -6,8 +6,9 @@ import EstudianteDetail from "../views/EstudianteDetail.vue";
 import EditarEstudiante from "../views/EditarEstudiante.vue";
 import EliminarEstudiante from "../views/EliminarEstudiante.vue"; 
 import CrearEstudiante from "../views/CrearEstudiante.vue"; 
-import TelefonoList from "../views/TelefonosList.vue"; 
-import CrearTelefono from "../views/CrearTelefono.vue"; 
+import CrearTelefono from "../views/CrearTelefono.vue";
+import EditarTelefono from "../views/EditarTelefono.vue";
+import EliminarTelefono from "../views/EliminarTelefono.vue";
 
 const routes = [
   {
@@ -53,19 +54,28 @@ const routes = [
     component: CrearEstudiante,
     meta: { requiresAuth: true },
   },
+  // Aquí el cambio: permitir opcionalmente pasar el estudianteId
   {
-    path: "/telefonos",
-    name: "TelefonosList",
-    component: TelefonoList,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/telefonos/crear/:estudianteId",
+    path: "/telefonos/nuevo/:estudianteId?",
     name: "CrearTelefono",
-    component: CrearTelefono,
+    component: CrearTelefono, 
+    props: true,
     meta: { requiresAuth: true },
   },
-
+  {
+    path: "/telefonos/editar/:telefonoId",
+    name: "EditarTelefono",
+    component: EditarTelefono,
+    props: true,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/telefonos/eliminar/:telefonoId",
+    name: "EliminarTelefono",
+    component: EliminarTelefono,
+    props: true,
+    meta: { requiresAuth: true },
+  },
 ];
 
 const router = createRouter({

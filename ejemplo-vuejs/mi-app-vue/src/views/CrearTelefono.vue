@@ -12,16 +12,9 @@
           <option value="">Seleccione...</option>
           <option value="celular">Celular</option>
           <option value="fijo">Fijo</option>
-          <!-- Agrega más tipos si necesitas -->
         </select>
       </div>
-      <!-- Si tu modelo requiere asociar a un estudiante (por id) -->
-      <!--
-      <div class="form-group">
-        <label>ID Estudiante</label>
-        <input v-model="form.estudiante" required />
-      </div>
-      -->
+      
       <button type="submit" class="save-btn">Agregar</button>
     </form>
     <p v-if="error" class="error-message">{{ error }}</p>
@@ -32,21 +25,33 @@
 import api from "@/api/axios";
 
 export default {
-  name: "CrearNumeroTelefonico",
+  name: "CrearTelefono",
   data() {
     return {
       form: {
         telefono: "",
         tipo: "",
-        // estudiante: "", // Descomenta si necesitas enviar el id del estudiante
+        estudiante: "",
       },
+      estudiantes: [],
       error: null,
     };
   },
+  async created() {
+    await this.fetchEstudiantes();
+  },
   methods: {
+    async fetchEstudiantes() {
+      try {
+        const response = await api.get("estudiantes/");
+        this.estudiantes = response.data.results || response.data;
+      } catch (err) {
+        this.error = "No se pudieron cargar los estudiantes.";
+      }
+    },
     async crearTelefono() {
       try {
-        await api.post("numerostelefonicos/", this.form);
+        await api.post("numerosts/", this.form);
         this.$router.push({ name: "EstudiantesList" });
       } catch (err) {
         this.error = "No se pudo crear el número telefónico";
